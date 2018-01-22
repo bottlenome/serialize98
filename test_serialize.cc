@@ -19,9 +19,14 @@ struct E {
     float c;
 };
 
-SERIALIZE(A, b, c);
-SERIALIZE(D, a, b);
-SERIALIZE_A(E, SERIALIZE_A_(b, 10), SERIALIZE_(c));
+struct F {
+    E e[10];
+};
+
+SERIALIZE2(A, SERIALIZE_(b), SERIALIZE_(c));
+SERIALIZE2(D, SERIALIZE_(a), SERIALIZE_(b));
+SERIALIZE2(E, SERIALIZE_A_(b, 10), SERIALIZE_(c));
+SERIALIZE1(F, SERIALIZE_A_(e, 10));
 
 int main()
 {
@@ -63,6 +68,12 @@ int main()
     {
         Serializer s(std::cout);
         s.add(e, "e");
+    }
+
+    F f;
+    {
+        Serializer s(std::cout);
+        s.add(f, "f");
     }
     return 0;
 }

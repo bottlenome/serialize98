@@ -210,25 +210,24 @@ SPECIALIZE_TO_NODES(double)
         ret.push_back(P); \
     }
 
-#define SERIALIZE(Type, P1, P2) \
-template<> \
-std::vector<Node> toNodes(Parameter<Type> p) \
-{ \
-    std::vector<Node> ret; \
-\
-    SERIALIZE_(P1) \
-    SERIALIZE_(P2) \
-\
-    return ret; \
-}
-
 #define SERIALIZE_A_(P, S) \
     std::vector<Node> tmp = toNodes(p.value_.P, #P, S); \
     for (int i = 0; i < tmp.size(); i++) { \
         ret.push_back(tmp[i]); \
     }
 
-#define SERIALIZE_A(Type, S1, S2) \
+#define SERIALIZE1(Type, S1) \
+template<> \
+std::vector<Node> toNodes(Parameter<Type> p) \
+{ \
+    std::vector<Node> ret; \
+\
+    S1 \
+\
+    return ret; \
+}
+
+#define SERIALIZE2(Type, S1, S2) \
 template<> \
 std::vector<Node> toNodes(Parameter<Type> p) \
 { \
@@ -236,6 +235,48 @@ std::vector<Node> toNodes(Parameter<Type> p) \
 \
     S1 \
     S2 \
+\
+    return ret; \
+}
+
+#define SERIALIZE3(Type, S1, S2, S3) \
+template<> \
+std::vector<Node> toNodes(Parameter<Type> p) \
+{ \
+    std::vector<Node> ret; \
+\
+    S1 \
+    S2 \
+    S3 \
+\
+    return ret; \
+}
+
+#define SERIALIZE4(Type, S1, S2, S3, S4) \
+template<> \
+std::vector<Node> toNodes(Parameter<Type> p) \
+{ \
+    std::vector<Node> ret; \
+\
+    S1 \
+    S2 \
+    S3 \
+    S4 \
+\
+    return ret; \
+}
+
+#define SERIALIZE5(Type, S1, S2, S3, S4, S5) \
+template<> \
+std::vector<Node> toNodes(Parameter<Type> p) \
+{ \
+    std::vector<Node> ret; \
+\
+    S1 \
+    S2 \
+    S3 \
+    S4 \
+    S5 \
 \
     return ret; \
 }
