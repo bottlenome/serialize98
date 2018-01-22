@@ -33,5 +33,13 @@ int main()
         s.add(a, "a");
     }
 
+    std::ofstream os("test.txt");
+    {
+        Serializer s(os);
+        s.add(a_a, "a", SIZE);
+        s.add(a, "a");
+    }
+    os.close();
+
     return 0;
 }
