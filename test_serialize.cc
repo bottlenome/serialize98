@@ -14,8 +14,14 @@ struct D {
     int b;
 };
 
+struct E {
+    int b[10];
+    float c;
+};
+
 SERIALIZE(A, b, c);
 SERIALIZE(D, a, b);
+SERIALIZE_A(E, b, c, 10);
 
 int main()
 {
@@ -51,6 +57,12 @@ int main()
     {
         Serializer s(std::cout);
         s.add(d, "d");
+    }
+
+    E e;
+    {
+        Serializer s(std::cout);
+        s.add(e, "e");
     }
     return 0;
 }

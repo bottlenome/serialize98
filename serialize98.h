@@ -124,15 +124,38 @@ SPECIALIZE_TO_STRING(double);
 template <class T>
 std::vector<Node> toNodes(Parameter<T> p);
 
+#define SPECIALIZE_PRIMITIVE_TO_NODES(Type) \
+template <> \
+std::vector<Node> toNodes(Parameter<Type> p) \
+{ \
+    std::vector<Node> ret; \
+    Node node(toString(p.value_), p.name_); \
+    ret.push_back(node); \
+    return ret; \
+}
+
+SPECIALIZE_PRIMITIVE_TO_NODES(char);
+SPECIALIZE_PRIMITIVE_TO_NODES(short);
+SPECIALIZE_PRIMITIVE_TO_NODES(int);
+SPECIALIZE_PRIMITIVE_TO_NODES(long);
+SPECIALIZE_PRIMITIVE_TO_NODES(unsigned char);
+SPECIALIZE_PRIMITIVE_TO_NODES(unsigned short);
+SPECIALIZE_PRIMITIVE_TO_NODES(unsigned int);
+SPECIALIZE_PRIMITIVE_TO_NODES(unsigned long);
+SPECIALIZE_PRIMITIVE_TO_NODES(float);
+SPECIALIZE_PRIMITIVE_TO_NODES(double);
+
 template <class T>
 std::vector<Node> toNodes(T p[], std::string name, size_t size)
 {
     std::vector<Node> ret;
     Node node("", name);
     for (int i = 0; i < size; i++) {
-        Node child("", "value" + toString(i));
-        Parameter<T> param(p[i], "");
-        child.add(toNodes(param));
+        Node child(toString(p[i]), "value" + toString(i));
+        if (!child.hasValue()) { // not primitive type
+            Parameter<T> param(p[i], "");
+            child.add(toNodes(param));
+        }
         
         std::vector<Node> inner;
         inner.push_back(child);
@@ -194,6 +217,24 @@ std::vector<Node> toNodes(Parameter<Type> p) \
     std::vector<Node> ret; \
 \
     SERIALIZE_(P1) \
+    SERIALIZE_(P2) \
+\
+    return ret; \
+}
+
+#define SERIALIZE_A_(P, S) \
+    std::vector<Node> tmp = toNodes(p.value_.P, #P, S); \
+    for (int i = 0; i < tmp.size(); i++) { \
+        ret.push_back(tmp[i]); \
+    }
+
+#define SERIALIZE_A(Type, P1, P2, S1) \
+template<> \
+std::vector<Node> toNodes(Parameter<Type> p) \
+{ \
+    std::vector<Node> ret; \
+\
+    SERIALIZE_A_(P1, S1) \
     SERIALIZE_(P2) \
 \
     return ret; \
