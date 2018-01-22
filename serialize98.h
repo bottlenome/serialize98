@@ -44,6 +44,11 @@ class Node {
         }
     }
 
+    bool hasValue()
+    {
+        return value_ != "";
+    }
+
     void write(std::ostream &os, std::string shift = "")
     {
         os << shift << name_ << ": ";
@@ -93,10 +98,28 @@ class Serializer {
 template<class T>
 std::string toString(T value)
 {
-    std::ostringstream oss;
-    oss << value;
-    return oss.str();
+    return "";
 }
+
+#define SPECIALIZE_TO_STRING(Type) \
+template<> \
+std::string toString(Type value) \
+{ \
+    std::ostringstream oss; \
+    oss << value; \
+    return oss.str(); \
+}
+
+SPECIALIZE_TO_STRING(char);
+SPECIALIZE_TO_STRING(short);
+SPECIALIZE_TO_STRING(int);
+SPECIALIZE_TO_STRING(long);
+SPECIALIZE_TO_STRING(unsigned char);
+SPECIALIZE_TO_STRING(unsigned short);
+SPECIALIZE_TO_STRING(unsigned int);
+SPECIALIZE_TO_STRING(unsigned long);
+SPECIALIZE_TO_STRING(float);
+SPECIALIZE_TO_STRING(double);
 
 template <class T>
 std::vector<Node> toNodes(Parameter<T> p);
@@ -133,20 +156,47 @@ std::vector<Node> toNodes(T &p, std::string name)
     return ret;
 }
 
+#define SPECIALIZE_TO_NODES(Type) \
+template <> \
+std::vector<Node> toNodes(Type &p, std::string name) \
+{ \
+    std::vector<Node> ret; \
+    return ret; \
+}
+
+SPECIALIZE_TO_NODES(char)
+SPECIALIZE_TO_NODES(short)
+SPECIALIZE_TO_NODES(int)
+SPECIALIZE_TO_NODES(long)
+SPECIALIZE_TO_NODES(unsigned char)
+SPECIALIZE_TO_NODES(unsigned short)
+SPECIALIZE_TO_NODES(unsigned int)
+SPECIALIZE_TO_NODES(unsigned long)
+SPECIALIZE_TO_NODES(float)
+SPECIALIZE_TO_NODES(double)
+
+#define SERIALIZE_(P) \
+    Node P(toString(p.value_.P), #P); \
+    if (!P.hasValue()) \
+    { \
+        std::vector<Node> tmp = toNodes(p.value_.P, #P); \
+        for (int i = 0; i < tmp.size(); i++) { \
+            ret.push_back(tmp[i]); \
+        } \
+    } else { \
+        ret.push_back(P); \
+    }
+
 #define SERIALIZE(Type, P1, P2) \
 template<> \
 std::vector<Node> toNodes(Parameter<Type> p) \
 { \
     std::vector<Node> ret; \
 \
-    Node P1(toString(p.value_.P1), #P1); \
-    ret.push_back(P1); \
-\
-    Node P2(toString(p.value_.P2), #P2); \
-    ret.push_back(P2); \
+    SERIALIZE_(P1) \
+    SERIALIZE_(P2) \
 \
     return ret; \
 }
-
 
 #endif

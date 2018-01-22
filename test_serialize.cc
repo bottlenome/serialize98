@@ -9,7 +9,13 @@ struct A {
     float c;
 };
 
-SERIALIZE(A, b, c)
+struct D {
+    A a;
+    int b;
+};
+
+SERIALIZE(A, b, c);
+SERIALIZE(D, a, b);
 
 int main()
 {
@@ -41,5 +47,10 @@ int main()
     }
     os.close();
 
+    D d;
+    {
+        Serializer s(std::cout);
+        s.add(d, "d");
+    }
     return 0;
 }
