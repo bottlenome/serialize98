@@ -37,12 +37,14 @@ int main()
     Node node("", "root");
     node.add(toNodes(a, "a"));
     node.write(std::cout);
+    std::cout << std::endl;
    
     A a_a[SIZE];
 
     Node node2("", "root");
     node2.add(toNodes(a_a, "a", SIZE));
     node2.write(std::cout);
+    std::cout << std::endl;
 
     {
         Serializer s(std::cout);
@@ -54,7 +56,7 @@ int main()
     {
         Serializer s(os);
         s.add(a_a, "a", SIZE);
-        s.add(a, "a");
+        s.add(a, "a2");
     }
     os.close();
 

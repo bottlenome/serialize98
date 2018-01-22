@@ -51,14 +51,21 @@ class Node {
 
     void write(std::ostream &os, std::string shift = "")
     {
-        os << shift << name_ << ": ";
+        os << shift << '"' << name_ << "\": ";
         if (value_ != "") {
             os << value_;
+            return;
+        } else {
+            os << "{" << std::endl;
         }
-        os << std::endl;
         for (int i = 0; i < childs_.size(); i++) {
             childs_[i].write(os, shift + "  ");
+            if (i != childs_.size() - 1) {
+                os << ",";
+            }
+            os << std::endl;
         }
+        os << shift << "}";
     }
 };
 
@@ -79,7 +86,10 @@ class Serializer {
 
     void write()
     {
-        root_.write(*os_);
+        *os_ << "{" << std::endl;
+        root_.write(*os_, "  ");
+        *os_ << std::endl;
+        *os_ << "}" << std::endl;
     }
 
     template<class T>
