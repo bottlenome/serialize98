@@ -228,14 +228,14 @@ std::vector<Node> toNodes(Parameter<Type> p) \
         ret.push_back(tmp[i]); \
     }
 
-#define SERIALIZE_A(Type, P1, P2, S1) \
+#define SERIALIZE_A(Type, S1, S2) \
 template<> \
 std::vector<Node> toNodes(Parameter<Type> p) \
 { \
     std::vector<Node> ret; \
 \
-    SERIALIZE_A_(P1, S1) \
-    SERIALIZE_(P2) \
+    S1 \
+    S2 \
 \
     return ret; \
 }

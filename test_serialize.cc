@@ -21,7 +21,7 @@ struct E {
 
 SERIALIZE(A, b, c);
 SERIALIZE(D, a, b);
-SERIALIZE_A(E, b, c, 10);
+SERIALIZE_A(E, SERIALIZE_A_(b, 10), SERIALIZE_(c));
 
 int main()
 {
