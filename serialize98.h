@@ -20,7 +20,7 @@ class Parameter {
 };
 
 class Node {
- public:
+ private:
     std::string name_;
     std::string value_;
     std::vector<Node> childs_;
@@ -30,6 +30,12 @@ class Node {
         value_ = value;
         name_ = name;
     }
+
+    Node()
+    {
+        value_ = "";
+        name_ = "root";
+    }
    
     void add(std::vector<Node> nodes)
     {
@@ -38,16 +44,49 @@ class Node {
         }
     }
 
-    void print(std::string shift = "")
+    void write(std::ostream &os, std::string shift = "")
     {
-        std::cout << shift << name_ << ": ";
+        os << shift << name_ << ": ";
         if (value_ != "") {
-            std::cout << value_;
+            os << value_;
         }
-        std::cout << std::endl;
+        os << std::endl;
         for (int i = 0; i < childs_.size(); i++) {
-            childs_[i].print(shift + "  ");
+            childs_[i].write(os, shift + "  ");
         }
+    }
+};
+
+class Serializer {
+ private:
+    std::ostream *os_;
+    Node root_;
+ public:
+    Serializer(std::ostream &os)
+    {
+        os_ = &os;
+    }
+
+    ~Serializer()
+    {
+        write();
+    }
+
+    void write()
+    {
+        root_.write(*os_);
+    }
+
+    template<class T>
+    void add(T p[], std::string name, size_t size)
+    {
+        root_.add(toNodes(p, name, size));
+    }
+
+    template<class T>
+    void add(T &p, std::string name)
+    {
+        root_.add(toNodes(p, name));
     }
 };
 
